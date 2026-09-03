@@ -133,10 +133,12 @@ namespace winrt::PasskeyManager::implementation
             BCRYPT_KEY_BLOB* pKeyBlob = reinterpret_cast<BCRYPT_KEY_BLOB*>(pbKeyData);
             if (pKeyBlob->Magic == BCRYPT_RSAPUBLIC_MAGIC)
             {
-                BCRYPT_PKCS1_PADDING_INFO paddingInfoStruct = {};
-                paddingInfoStruct.pszAlgId = BCRYPT_SHA256_ALGORITHM;
+                BCRYPT_PSS_PADDING_INFO paddingInfoStruct = {
+                    .pszAlgId = BCRYPT_SHA256_ALGORITHM,
+                    .cbSalt = 32
+                };
                 paddingInfo = &paddingInfoStruct;
-                dwCngFlags = BCRYPT_PAD_PKCS1;
+                dwCngFlags = BCRYPT_PAD_PSS;
             }
 
             RETURN_IF_WIN32_ERROR(NCryptVerifySignature(
